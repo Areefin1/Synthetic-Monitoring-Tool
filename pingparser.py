@@ -4,7 +4,7 @@ import socket
 
 '''
 Main function to prompt the user for destination server and number of ping requests, execute ping commands, print its contents in simplified view.
-Repeats until valid input is provided for both destination and number of ping requestas.
+Repeats until valid input is provided for both destination and number of ping requests.
 '''
 def main():
 

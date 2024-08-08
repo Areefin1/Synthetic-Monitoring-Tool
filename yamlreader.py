@@ -16,8 +16,7 @@ def main():
 
         # If the file is valid, print its contents and exit the loop.
         if isFileValid:
-            print(result)
-            break
+            return result
 
 '''
 Process the given file name to read and parse the YAML content.

@@ -14,7 +14,7 @@ def main():
         # Call the function to process the file and check if it is valid.
         result, isFileValid = process_file(file_name)
 
-        # If the file is valid, print its contents and exit the loop.
+        # If the file is valid, return its contents and exit the loop.
         if isFileValid:
             return result
 

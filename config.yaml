@@ -1,8 +1,7 @@
 
+interval: 10
 destinations:
  - destination: "www.google.com"
    count: 5
-   interval: 5
  - destination: "www.youtube.com"
    count: 2
-   interval: 10

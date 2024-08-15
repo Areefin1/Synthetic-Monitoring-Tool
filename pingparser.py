@@ -6,8 +6,7 @@ from yamlreader import main as read_yaml
 
 '''
 Main function to call yamlreader.py file's main function that asks the user for YAML file to parse.
-It accepts and parses multiple destinations and it assigns each values for each respective destination, number of ping requests or probes, and 
-time interval in seconds.
+It parses multiple destinations with a specified time interval and number of ping requests or probes for each destination.
 Finally, it executes process_ping() function to start pinging each destination and gather information and calls the simplified_stats() function to 
 print the simplified and readable ping statistics output.
 '''
@@ -19,95 +18,66 @@ def main():
         print("Error: Missing required key or file information in the YAML file.")
         return
     
+    interval = check_value(config['interval'])
+    
     for item in config['destinations']:
-        if 'destination' not in item or 'count' not in item or 'interval' not in item:
+        if 'destination' not in item or 'count' not in item:
             print(f"Error: Missing required {item} in the YAML file. Proceeding to next destination.")
             continue
     
         destination = check_destination(item['destination'].strip())
         count = check_value(item['count'])
-        interval = check_value(item['interval'])
 
-        if destination and count and interval:
+        if destination and count:
             results = process_ping(destination, count, interval)
             simplified_stats(results)
 
 '''
-Pings server's "destination" "count" number of times after every time "interval" in seconds.
+Pings each server's "destination" "count" number of times at a specified time "interval" in seconds in between each destination.
 
  Args:
         destination (str): Website or IP address.
         count (int): Number of ping requests or probes.
         interval (int): Time interval in seconds.
 Returns:
-        results (dict): Contains all aggregated ping information and statistics.
+        stats (dict): Contains all aggregated ping information and statistics.
 '''
 def process_ping(destination, count, interval):
+
+    # Intialization
     ping_parser = pingparsing.PingParsing()
     transmitter = pingparsing.PingTransmitter()
-
-    # Set destination and send a ping one at a time until desired number of count is reached.
     transmitter.destination = destination
-    transmitter.count = 1
+    transmitter.count = count
 
-    # Create a custom dictionary and initializing relevant key-value pairs.
-    results = {
-        'destination': destination,
-        'packet_transmit': 0,
-        'packet_receive': 0,
-        'packet_loss_rate': 0.0,
-        'packet_loss_count': 0,
-        'rtt_min': float('inf'),
-        'rtt_avg': 0.0,
-        'rtt_max': float('-inf'),
-        'start_time': None,
-        'end_time': None,
-        'elapsed_time': None
-    }
-
-    
     startTime = datetime.now()
-    print(f'Pinging {destination}:')
-
-    # Loop through each ping request and sum each value.
-    for _ in range(count):
-        result = transmitter.ping()
-        stats = ping_parser.parse(result).as_dict()
-
-        raw_output = result.stdout.strip()
-
-        # Print ICMP reply for each ping request in real-time.
-        reply_start = raw_output.find("Reply from")
-        if reply_start != -1:
-            reply_end = raw_output.find("\n", reply_start)
-            icmp_reply = raw_output[reply_start:reply_end].replace("TTL", "Time-To-Live")
-            print(icmp_reply)
-        
-        results['packet_transmit'] += stats['packet_transmit']
-        results['packet_receive'] += stats['packet_receive']
-        results['packet_loss_count'] += stats['packet_transmit'] - stats['packet_receive']
-
-        results['rtt_min'] = min(results['rtt_min'], stats['rtt_min'])
-        results['rtt_max'] = max(results['rtt_max'], stats['rtt_max'])
-        results['rtt_avg'] += stats['rtt_avg']
-
-        time.sleep(interval)
-    
-    print()
+    time.sleep(interval)
+    result = transmitter.ping()
     endTime = datetime.now()
+
+    stats = ping_parser.parse(result).as_dict()
+
+    raw_output = result.stdout.strip()
+    icmp_replies = raw_output.split("\n")
+    print()
+
+    # Print each ICMP reply message
+    for icmp_reply in icmp_replies:
+        if 'Reply from' in icmp_reply or 'Pinging' in icmp_reply:
+            print(icmp_reply.strip().replace("TTL", "Time-to-Live"))
+
+    print()
 
     # Calculate elapsed time using the start and end timestamps.
     elapsedTime = endTime - startTime
     total_seconds = elapsedTime.total_seconds() 
     formatted_elapsedTime = f"{int(total_seconds // 3600):02}:{int((total_seconds % 3600) // 60):02}:{total_seconds % 60:06.3f}"
 
-    results['rtt_avg'] /= count
-    results['packet_loss_rate'] = results['packet_loss_count'] / results['packet_transmit']
-    results['start_time'] = startTime.strftime('%m/%d/%y %H:%M:%S')
-    results['end_time'] = endTime.strftime('%m/%d/%y %H:%M:%S')
-    results['elapsed_time'] = formatted_elapsedTime
+    stats['start_time'] = startTime.strftime('%m/%d/%y %H:%M:%S')
+    stats['end_time'] = endTime.strftime('%m/%d/%y %H:%M:%S')
+    stats['elapsed_time'] = formatted_elapsedTime
 
-    return results
+    return stats
 
 '''
 Prints a more simplified and readable ping statistic output.

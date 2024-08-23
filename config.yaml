@@ -1,7 +1,13 @@
 
-interval: 10
+interval: 3
 destinations:
  - destination: "www.google.com"
-   count: 5
+   count: 20
  - destination: "www.youtube.com"
-   count: 2
+   count: 10
+ - destination: "www.facebook.com"
+   count: 5
+ - destination: "www.amazon.com"
+   count: 3
+ - destination: "www.twitch.tv"
+   count: 8

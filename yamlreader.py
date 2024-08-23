@@ -1,22 +1,33 @@
 import yaml
 
 '''
-Main function to prompt the user for a YAML file name, process the file, and print its contents.
+Main function is to give the user a choice between using the default config file or provide their own to parse.
 Repeats until a valid file is provided.
 '''
 def main():
 
-    while True:
-
-        # Prompt user for file name, stripping any leading/trailing whitespace.
-        file_name = input("Enter file name: ").strip()
-
-        # Call the function to process the file and check if it is valid.
-        result, isFileValid = process_file(file_name)
-
-        # If the file is valid, return its contents and exit the loop.
+    choice = input("A config is needed to run this application. You have an option to use either your own custom config file or use the default config file. Type y or yes to use the default config otherwise you will be prompted to enter a valid config file (y/n): ").strip().lower()
+    
+    if choice in ('y', 'yes'):
+        result, isFileValid = process_file("config.yaml")
         if isFileValid:
             return result
+        else:
+            print("Error: Unable to load default config file. Exiting.")
+            return None
+        
+    else:
+        while True:
+
+            # Prompt user for file name, stripping any leading/trailing whitespace.
+            file_name = input("Enter file name: ").strip()
+
+            # Call the function to process the file and check if it is valid.
+            result, isFileValid = process_file(file_name)
+
+            # If the file is valid, return its contents and exit the loop.
+            if isFileValid:
+                return result
 
 '''
 Process the given file name to read and parse the YAML content.

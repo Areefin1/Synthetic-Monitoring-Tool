@@ -49,7 +49,7 @@ def main():
 
         if destination and count:
             results = process_ping(destination, count, interval)
-            simplified_stats(results)
+            simplified_stats(results, destination)
     
     # Keep the server running indefinitely with the option to quit with CTRL-C command
     quit_option(server, thread)
@@ -94,7 +94,7 @@ def process_ping(destination, count, interval):
 
     # Convert and set each ping metric into a format that Prometheus client understands
     for key, metric in metrics_map.items():
-        metric.labels(server=stats["destination"]).set(stats[key])
+        metric.labels(server=destination).set(stats[key])
 
     raw_output = result.stdout.strip()
     icmp_replies = raw_output.split("\n")
@@ -126,10 +126,10 @@ Prints a more simplified and readable ping statistic output.
 Returns:
         None
 '''
-def simplified_stats(result):
+def simplified_stats(result, destination):
 
     print('Simplified Ping Statistics:\n')
-    print(f'Ping destination: {result.get("destination")}')
+    print(f'Ping destination: {destination}')
     print(f"Date and time when the ping request was first initiated/sent: {result.get('start_time')}")
     print(f'Number of packets sent: {result.get("packet_transmit")}')
     print(f'Number of packets received: {result.get("packet_receive")}')

@@ -3,14 +3,33 @@ from datetime import datetime
 import time
 import socket
 from yamlreader import main as read_yaml
+from prometheus_client import start_http_server, Gauge
+
+# Define metrics globally so they are only registered once
+metrics_map = {
+    "packet_transmit": Gauge("packet_transmit", "Number of Packets Sent", ["server"]),
+    "packet_receive": Gauge("packet_receive", "Number of Packets Received", ["server"]),
+    "packet_loss_rate": Gauge("packet_loss_rate", "Percentage of Packet Loss", ["server"]),
+    "packet_loss_count": Gauge("packet_loss_count", "Number of Packets lost", ["server"]),
+    "rtt_min": Gauge("rtt_min", "Fastest Round-Trip Time", ["server"]),
+    "rtt_avg": Gauge("rtt_avg", "Average Round-Trip Time", ["server"]),
+    "rtt_max": Gauge("rtt_max", "Slowest Round-Trip Time", ["server"])    
+}
 
 '''
-Main function to call yamlreader.py file's main function that asks the user for YAML file to parse.
+Main function is to start ping monitor's HTTP server on port 8989. 
+Calls yamlreader.py file's main function that asks user for YAML config file to parse.
 It parses multiple destinations with a specified time interval and number of ping requests or probes for each destination.
-Finally, it executes process_ping() function to start pinging each destination and gather information and calls the simplified_stats() function to 
-print the simplified and readable ping statistics output.
+Then it executes process_ping() to process each destination's ping and gather metrics.
+Subsequently, it converts each ping metric into a metric format that Prometheus client understands and outputs each metric on the Prometheus UI.
+Finally, it prints the simplified ping statistics to the terminal.
 '''
 def main():
+
+    server, thread = start_http_server(8989)
+    print()
+    print("HTTP server has started on port 8989")
+    time.sleep(3)
 
     config = read_yaml()
 
@@ -31,6 +50,22 @@ def main():
         if destination and count:
             results = process_ping(destination, count, interval)
             simplified_stats(results)
+    
+    # Keep the server running indefinitely with the option to quit with CTRL-C command
+    quit_option(server, thread)
+
+def quit_option(server, t):
+    
+    print("If you wish to shut down the server, please press 'CTRL-C' command to quit the server gracefully.")
+    try:
+        while True:
+            time.sleep(10)
+        
+    except KeyboardInterrupt:
+        print("Gracefully shutting down the server on port 8989.")
+        server.shutdown()
+        t.join()
+        print("Server on port 8989 has been successfully shut down.")
 
 '''
 Pings each server's "destination" "count" number of times at a specified time "interval" in seconds in between each destination.
@@ -56,6 +91,10 @@ def process_ping(destination, count, interval):
     endTime = datetime.now()
 
     stats = ping_parser.parse(result).as_dict()
+
+    # Convert and set each ping metric into a format that Prometheus client understands
+    for key, metric in metrics_map.items():
+        metric.labels(server=stats["destination"]).set(stats[key])
 
     raw_output = result.stdout.strip()
     icmp_replies = raw_output.split("\n")
@@ -126,6 +165,7 @@ Check and validate config file's input value for destination with exception hand
 def check_destination(destination):
 
     try:
+        print("Fetching...")
         if not destination:
             raise ValueError("The destination address cannot be empty. Please ensure that the config contains valid hostname or IP address and try again.")
         socket.gethostbyname(destination)

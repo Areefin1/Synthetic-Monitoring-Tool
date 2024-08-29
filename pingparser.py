@@ -5,6 +5,10 @@ import socket
 from yamlreader import main as read_yaml
 from prometheus_client import start_http_server, Gauge
 
+# Define server and thread globally
+server = None
+thread = None
+
 # Define metrics globally so they are only registered once
 metrics_map = {
     "packet_transmit": Gauge("packet_transmit", "Number of Packets Sent", ["server"]),
@@ -26,6 +30,7 @@ Finally, it prints the simplified ping statistics to the terminal.
 '''
 def main():
 
+    global server, thread
     server, thread = start_http_server(8989)
     print()
     print("HTTP server has started on port 8989")

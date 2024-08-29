@@ -1,6 +1,6 @@
 # Ping Monitor Web Application using Python, Flask, Prometheus, and Grafana
 
-**Ping Monitor** is a web application that enables real-time monitoring of network performance. It allows users to configure pings, collect metrics such as packets sent/received, packet loss, and round-trip time, and store them in a Prometheus time-series database. Grafana is used to visualize these metrics, providing valuable insights into network health and performance.
+**Ping Monitor** is a web application that enables real-time monitoring of network performance. It allows users to configure pings, collect metrics such as packets sent/received, packet loss, and round-trip time latency, and store them in a Prometheus time-series database. Grafana is used to visualize these metrics, providing valuable insights into network health and performance.
 
 ## System Design Diagram
 

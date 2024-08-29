@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ping Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">      
+</head>
+<body>
+    <h1>Ping Monitor</h1>
+    <!-- Display current config -->
+    <h2>Current Configuration</h2>
+    <div class="config-list">
+        <table>
+            <tr>               
+                <th>Interval</th>
+                <td>{{ config.interval }}</td>
+            </tr>
+            <tr>                
+                <th>Destinations</th>
+                <th> Count</th>
+                <th>Action</th>
+            </tr>
+            {% for item in config.destinations %}
+            <tr class="config-item">
+                <td>{{ item.destination }}</td>
+                <td>
+                    {{ item.count }}
+                </td>
+                <td>
+                    <form action="{{ url_for('delete_dest') }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="destination" value="{{ item.destination }}">
+                        <button class="delete-button" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <!-- Form to add a new destination -->
+    <h2>Add Destination</h2>
+    <form action="{{ url_for('add_dest') }}" method="POST" onsubmit="return validateForm()">
+        <input type="text" name="destination" placeholder="Destination (e.g., www.google.com)" id="destination">
+        <input type="number" name="count" placeholder="Ping Count" id="count">
+        <input type="submit" value="Add">
+    </form>
+    <script>
+        function validateForm()
+        {
+            var destination = document.getElementById("destination").value;
+            var count = document.getElementById("count").value;
+
+            if(destination === "" || count === "")
+            {
+                alert("Please fill out both the destination and count fields.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <!-- Form to update the interval -->
+    <h2>Update Interval</h2>
+    <form action="{{ url_for('update_interv') }}" method="POST">
+        <input type="number" name="interval" placeholder="Interval in seconds">
+        <input type="submit" value="Update">
+    </form>
+    <!-- Button to start the ping process -->
+    <h2>Start Pinging</h2>
+    <form action="{{ url_for('start_servers') }}">
+        <input type="submit" value="Start Server and Ping">
+    </form>
+    <form action="{{ url_for('restart_ping') }}">
+        <input type="submit" value="Restart Ping">
+    </form>
+    <form action="{{ url_for('stop_servers') }}">
+        <input type="submit" value="Stop Server">
+    </form>
+    <form action="{{ url_for('shutdown') }}" method="post">
+        <input type="submit" value="Close Flask">
+    </form>   
+</body>
+</html>

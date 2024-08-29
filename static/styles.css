@@ -1,0 +1,98 @@
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1, h2 {
+    font-family: 'Courier New', Courier, monospace;
+    color: #e0e0e0;
+    border-bottom: 2px solid #888;
+    padding-bottom: 5px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input[type="text"], input[type="number"] {
+    width: 20%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: #222;
+    color: #fff;
+}
+
+input[type="submit"] {
+    background-color: #0000ff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #00ff04;
+}
+
+.config-list {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #222;
+    border-radius: 5px;
+    text-align: center;
+}
+
+table {
+    margin: 0 auto;
+    text-align: center;
+    width: 50%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #444;
+    text-align: center;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #333;
+    text-align: center;
+}
+
+td {
+    background-color: #222;
+}
+
+.config-item button {
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.config-item button:hover {
+    background-color: #d32f2f;
+}
+
+.delete-button {
+    position: relative;
+    right: 10;
+}

@@ -4,5 +4,6 @@ Ping Monitor is a web application that enables real-time monitoring of network p
 
 ## System Design Diagram
 
-![Ping Monitor System Architecture](https://github.com/Areefin1/Synthetic-Monitoring-Tool/blob/main/ping_monitor_system_architecture.png)
+<img src="https://github.com/Areefin1/Synthetic-Monitoring-Tool/raw/main/ping_monitor_system_architecture.png" alt="Ping Monitor System Architecture" width="400"/>
+
 

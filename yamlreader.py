@@ -1,4 +1,5 @@
 import yaml
+import socket
 
 '''
 Main function is to give the user a choice between using the default config file or provide their own to parse.
@@ -6,28 +7,77 @@ Repeats until a valid file is provided.
 '''
 def main():
 
-    choice = input("A config is needed to run this application. You have an option to use either your own custom config file or use the default config file. Type y or yes to use the default config otherwise you will be prompted to enter a valid config file (y/n): ").strip().lower()
-    
-    if choice in ('y', 'yes'):
-        result, isFileValid = process_file("config.yaml")
-        if isFileValid:
-            return result
-        else:
-            print("Error: Unable to load default config file. Exiting.")
-            return None
-        
+    result, isFileValid = process_file("config.yaml")
+    if isFileValid:
+        return result
     else:
-        while True:
+        print("Error: Unable to load default config file. Exiting.")
+        return None
 
-            # Prompt user for file name, stripping any leading/trailing whitespace.
-            file_name = input("Enter file name: ").strip()
+def delete_destination(config, destination, config_file):
 
-            # Call the function to process the file and check if it is valid.
-            result, isFileValid = process_file(file_name)
+    for item in config['destinations']:
+        if destination == item['destination']:
+            config['destinations'].remove(item)
+            save_config(config, config_file)
+            print(f'Destination {destination} have been deleted.')
+            break
+    else:
+        print(f'Destination {destination} not found.')
 
-            # If the file is valid, return its contents and exit the loop.
-            if isFileValid:
-                return result
+def update_interval(config, interval, config_file):
+
+    validated_interval = check_value(interval)
+
+    if validated_interval:
+        config['interval'] = validated_interval
+        save_config(config, config_file)
+        print(f'Time delay interval updated to {validated_interval}.')
+    else:
+        print(f'Invalid interval: {interval}. Interval not updated.')
+
+def add_destination(config, destination, count, config_file):
+
+    validated_destination = check_destination(destination.strip())
+    validated_count = check_value(count)
+
+    if validated_destination and validated_count:
+        if 'destinations' not in config:
+            config['destinations'] = []
+        
+        for item in config['destinations']:
+            if item['destination'] == validated_destination:
+                item['count'] = validated_count
+                save_config(config, config_file)
+                print(f'Destination {validated_destination} already exists. Updating count to {validated_count}.')
+                return 
+        
+        config['destinations'].append({
+            'destination': validated_destination,
+            'count': validated_count
+        })
+        save_config(config, config_file)
+        print(f'Added destination {validated_destination} with count {validated_count}.')
+    else:
+        print("Invalid destination or count. Destination not added.")
+
+def save_config(config, fileName):
+
+    with open(fileName, 'w') as file:
+        yaml.dump(config, file, default_flow_style=False)
+    print(f'Configuration saved to {fileName}.')
+
+def load_config(config):
+
+    result, isFileValid = process_file(config)
+
+    if isFileValid:
+        return result
+    else:
+        print("Error: Unable to load default config file. Exiting.")
+        return None
+
+
 
 '''
 Process the given file name to read and parse the YAML content.
@@ -61,6 +111,39 @@ def process_file(fileName):
     except OSError:
         print(f'Error: Invalid file name.\nError translation: The file name "{fileName}" contains invalid characters or is not allowed. Please use a valid file name and try again.')
     return None, False
+
+def check_value(value):
+
+    try:
+        if value <= 0:
+            print("Error: The input value must be a positive integer.")
+            return None
+        else:
+            return value
+    except ValueError:
+        print("Error: Invalid input. Please enter a positive integer.")
+        return None
+    except Exception:
+        print("An unexpected error has occurred")
+        return None
+    
+def check_destination(destination):
+
+    try:
+        print("Fetching...")
+        if not destination:
+            raise ValueError("The destination address cannot be empty. Please enter a valid hostname or IP address.")
+        socket.gethostbyname(destination)
+        return destination
+    except ValueError as e:
+        print(f'Error: {e}')
+        return None
+    except socket.gaierror:
+        print(f'Error: Invalid destination. Either {destination} does not exist or is mistyped. Please enter a valid hostname or IP address and try again.')
+        return None
+    except Exception as e:
+        print(f'An unexpected error has occurred: {e}')
+        return None
 
 '''
 Reads and parses the YAML file content.

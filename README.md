@@ -60,7 +60,7 @@ To use the provided Grafana dashboard for visualizing network metrics:
 3. **Import the Dashboard:**
    - From the Grafana main menu, select **Dashboards** > **Create dashboard** > **Import dashboard**.
    - Click **Upload JSON File** and select the downloaded JSON file (`Ping_Statistics_Metrics.json`).
-   - Configure your Prometheus data source (select **Change uid**).
+   - Configure your Prometheus data source by selecting **Change uid** if needed.
    - Click **Import** to add the dashboard to your Grafana instance.
 
 **Note:** Ensure that you have a properly configured Prometheus data source to view the metrics on this dashboard. In the Data sources tab, search for **prometheus**, select it, and enter the default **Connection** to Prometheus server URL: 'http://localhost:9090/' without single quotes.

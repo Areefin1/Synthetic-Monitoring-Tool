@@ -52,7 +52,7 @@ Follow these step-by-step instructions to set up the Ping Monitor web applicatio
 To use the provided Grafana dashboard for visualizing network metrics:
 
 1. **Download the Dashboard JSON File:**
-   - [Download the JSON file](https://github.com/Areefin1/Synthetic-Monitoring-Tool/blob/main/grafana_dashboards/Ping_Statistics_Metrics.json).
+   - [Download the JSON file](https://github.com/Areefin1/Synthetic-Monitoring-Tool/blob/main/Ping%20Statistics%20Metrics-1724975092042.json).
 
 2. **Open Grafana and Log In:**
    - Log in to your Grafana instance. If Grafana is not installed, follow the [Grafana installation guide](https://grafana.com/grafana/download).

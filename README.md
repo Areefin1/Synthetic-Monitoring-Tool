@@ -1,6 +1,6 @@
 # Ping Monitor Web Application using Python, Flask, Prometheus, and Grafana
 
-**Ping Monitor** is a web application that enables real-time monitoring of network performance. It allows users to configure pings, collect metrics such as packets sent/received, packet loss, and round-trip time latency, and store them in a Prometheus time-series database. Grafana is used to visualize these metrics, providing valuable insights into network health and performance.
+**Ping Monitor** is a web application that enables real-time monitoring of network performance. It allows users to configure pings, collect metrics such as packets sent/received, packet loss, and round-trip time, and store them in a Prometheus time-series database. Grafana is used to visualize these metrics, providing valuable insights into network health and performance.
 
 ## System Design Diagram
 
@@ -47,5 +47,22 @@ Follow these step-by-step instructions to set up the Ping Monitor web applicatio
 5. **Run the Flask Application:**
    ```bash
    python flask_app.py
-6. **Import Grafana Visualization Dashboard:**
-- Use Grafana to import the visualization dashboard and connect it to Prometheus for real-time monitoring.
+6. **Importing the Grafana Dashboard:**
+
+To use the provided Grafana dashboard for visualizing network metrics:
+
+1. **Download the Dashboard JSON File:**
+   - [Download the JSON file](https://github.com/Areefin1/Synthetic-Monitoring-Tool/blob/main/grafana_dashboards/Ping_Statistics_Metrics.json).
+
+2. **Open Grafana and Log In:**
+   - Log in to your Grafana instance. If Grafana is not installed, follow the [Grafana installation guide](https://grafana.com/grafana/download).
+
+3. **Import the Dashboard:**
+   - From the Grafana main menu, select **Dashboards** > **Create dashboard** > **Import dashboard**.
+   - Click **Upload JSON File** and select the downloaded JSON file (`Ping_Statistics_Metrics.json`).
+   - Configure your Prometheus data source (select **Change uid**).
+   - Click **Import** to add the dashboard to your Grafana instance.
+
+**Note:** Ensure that you have a properly configured Prometheus data source to view the metrics on this dashboard. In the Data sources tab, search for **prometheus**, select it, and enter the default **Connection** to Prometheus server URL: 'http://localhost:9090/' without single quotes.
+
+Enjoy.
